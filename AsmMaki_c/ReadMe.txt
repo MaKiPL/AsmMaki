@@ -1,40 +1,22 @@
-========================================================================
-    CONSOLE APPLICATION : AsmMaki_c Project Overview
-========================================================================
-
-AppWizard has created this AsmMaki_c application for you.
-
-This file contains a summary of what you will find in each of the files that
-make up your AsmMaki_c application.
+AsmMaki is probably the first realtime x86-32 assembler interpretor made for training and learning. Keep in mind it's only a simulator. Simulator will have real-time updated register content (just like in debuggers) but it will let you input commands without worrying about program crashing. You'll be able to train for example arithmetic operations including FPU without having to assembly the software in e.g. NASM or FASM and debug again. 
 
 
-AsmMaki_c.vcxproj
-    This is the main project file for VC++ projects generated using an Application Wizard.
-    It contains information about the version of Visual C++ that generated the file, and
-    information about the platforms, configurations, and project features selected with the
-    Application Wizard.
 
-AsmMaki_c.vcxproj.filters
-    This is the filters file for VC++ projects generated using an Application Wizard. 
-    It contains information about the association between the files in your project 
-    and the filters. This association is used in the IDE to show grouping of files with
-    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
-    "Source Files" filter).
+Planned assembler available features for core release:
+*Memory (EAX:EDX registers + extension)
+*ALU Arithmetic + logic (with FLAGS simulation)
+*Conditions (debug TRUE or FALSE for CMP; Simulation for e.g. JNE, JA ... will yeld only SUCCESS or FAIL in log window)
+*FPU operations
+*Basic 4096 byte stack
 
-AsmMaki_c.cpp
-    This is the main application source file.
+Planned assembler available features for upcoming release that MIGHT happen:
+*Allocating memory for DB; DD allocating
+*Memory management with pointer from allocated memory (e.g. MOV eax, [EBX])
 
-/////////////////////////////////////////////////////////////////////////////
-Other standard files:
-
-StdAfx.h, StdAfx.cpp
-    These files are used to build a precompiled header (PCH) file
-    named AsmMaki_c.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
-Other notes:
-
-AppWizard uses "TODO:" comments to indicate parts of the source code you
-should add to or customize.
-
-/////////////////////////////////////////////////////////////////////////////
+Planned assembler features in future that probably won't happen:
+*Allocating memory for functions and assemblying user code
+*Flow control
+*Conditons with working flow
+*Internal calling
+*Syscalling + INT operations simulation (based on BIOS + DOS)
+*Assemblying to machine code
