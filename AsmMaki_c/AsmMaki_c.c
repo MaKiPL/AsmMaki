@@ -4,25 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
+#include <string.h>
 #include "curses.h"
+#include "Memory.h"
 
 int width = 60;
 int height = 13;
-
-#define DWORD unsigned int
-#define WORD unsigned short
-#define BYTE unsigned char
-#define QWORD unsigned long long
-#define SINGLE float
-
-DWORD EAX,EBX,ECX,EDX,ESI,EDI,EBP,EIP,ESP = 0x0;
-BYTE SF, ZF, OF, CF, PF, AF;
-SINGLE ST0, ST1, ST2, ST3, ST4, ST5, ST6, ST7 = 0.0f;
-WORD CS, FS, DS, GS, ES, SS = 0;
-
-int STACK[1024] = { 0 }; //4096 bytes stack; Current by ESP; PUSH= STACK[ESP++] = %arg; POP the same but zeroing and ESP--
-int CurrentStackSize = 11;
-
 
 
 WINDOW * InitScreen()
@@ -46,6 +33,22 @@ void InitColors(WINDOW *wnd)
 WINDOW * InitRegisterWindow()
 {
 	WINDOW * regWin = newwin(20, 40, 0, 80);
+	wborder(regWin, (char)221, (char)221, (char)220, (char)223, (char)222, (char)219, (char)220, (char)220);
+	wrefresh(regWin);
+	return regWin;
+}
+
+WINDOW * InitCommandWindow()
+{
+	WINDOW * regWin = newwin(10, 80, 20, 0);
+	wborder(regWin, (char)221, (char)221, (char)220, (char)223, (char)222, (char)219, (char)220, (char)220);
+	wrefresh(regWin);
+	return regWin;
+}
+
+WINDOW * InitHistoryWindow()
+{
+	WINDOW * regWin = newwin(20, 80, 0, 0);
 	wborder(regWin, (char)221, (char)221, (char)220, (char)223, (char)222, (char)219, (char)220, (char)220);
 	wrefresh(regWin);
 	return regWin;
@@ -162,6 +165,51 @@ void UpdateStackWindow(WINDOW * stackWin)
 	wrefresh(stackWin);
 }
 
+void UpdateWindows(WINDOW * segwin, WINDOW * regwin, WINDOW * stackwin, WINDOW * commwin, WINDOW * histwin)
+{
+	UpdateStackWindow(stackwin);
+	RefreshRegisters(regwin, segwin);
+
+	wclear(commwin);
+	wborder(commwin, (char)221, (char)221, (char)220, (char)223, (char)222, (char)219, (char)220, (char)220);
+	char  n[128] = "> ";
+	if (strlen(CurrentCommand) != 0)
+	{
+		strcat(n, CurrentCommand);
+	}
+	mvwaddstr(commwin, 1, 1, n);
+	wrefresh(commwin);
+
+	wclear(histwin);
+	wborder(histwin, (char)221, (char)221, (char)220, (char)223, (char)222, (char)219, (char)220, (char)220);
+	for (int i = 0; i < CommandHistoryCount; i++)
+		if(strlen(CommandHistory[i])!=0)
+			mvwaddstr(histwin, i + 1, 1, CommandHistory[i]);
+	wrefresh(histwin);
+}
+
+void CommandHistoryRewind()
+{
+	CommandHistoryCount = 17;
+	for (int i = 1; i < 18; i++)
+		strcpy(CommandHistory[i - 1], CommandHistory[i]);
+}
+
+void ParseCommand()
+{
+	char CommandParsed[8][16] = { 0 };
+	char * chunk = strtok(CurrentCommand, " ");
+	int chunkIndex = 0;
+	while (chunk)
+	{
+		strcpy(CommandParsed[chunkIndex++], chunk);
+		chunk = strtok(NULL, " ");
+	}
+
+	if (IsCPUMnemonic(CommandParsed[0]))
+		SimulateCPUMnemonic(CommandParsed);
+}
+
 
 int main()
 {
@@ -177,23 +225,45 @@ int main()
 	WINDOW * segWin = InitSegmementRegister();
 	WINDOW * regWin = InitRegisterWindow();
 	WINDOW * stackWin = InitStackWindow();
+	WINDOW * commWin = InitCommandWindow();
+	WINDOW * histWin = InitHistoryWindow();
 
-	UpdateStackWindow(stackWin);
-	RefreshRegisters(regWin, segWin);
-
+	cbreak();
 	noecho();
 	keypad(stdscr, TRUE);
-	raw();
-	while (1) {
-		int key = getwchar(); //key test wide char fixed read.cpp assert
-		switch (key)
+	noraw();
+	UpdateWindows(segWin, regWin, stackWin, commWin, histWin);
+
+	while (1) 
+	{
+		int commandLength = strlen(CurrentCommand);
+		UpdateWindows(segWin, regWin, stackWin, commWin, histWin);
+		int key = wgetch(commWin);
+		if (key == 13 || key == 10)
 		{
-		case 'q':
-		case 'Q':
-			delwin(wnd);
-			endwin();
-			return -1;
+			if (commandLength == 0) continue;
+			if (CommandHistoryCount == 18)
+				CommandHistoryRewind();
+			strcpy(CommandHistory[CommandHistoryCount++], CurrentCommand);
+			ParseCommand();
+			memset(CurrentCommand, '\0', 128);
+			continue;
 		}
+		if (key == 0x08) //BACKSPACE
+		{
+
+			if (commandLength < 1)
+				continue;
+			for (int i = commandLength; i < 128; i++)
+			{
+				*(CurrentCommand + (i-1)) = '\0';
+			}
+			continue;
+		}
+		if (commandLength >= 64) continue;
+		char * c = calloc(2, sizeof(char));
+		*c = (char)key;
+		strcat(CurrentCommand, c);
 	}
     return 0;
 }

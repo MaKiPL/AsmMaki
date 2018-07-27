@@ -151,9 +151,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AsmMaki_c.c" />
+    <ClCompile Include="CPU.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core.h" />
     <ClInclude Include="D:\PDCurses\curses.h" />
+    <ClInclude Include="Memory.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
