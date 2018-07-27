@@ -246,6 +246,7 @@ int main()
 				CommandHistoryRewind();
 			strcpy(CommandHistory[CommandHistoryCount++], CurrentCommand);
 			ParseCommand();
+			EIP++;
 			memset(CurrentCommand, '\0', 128);
 			continue;
 		}

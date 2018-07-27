@@ -17,6 +17,10 @@ char CurrentCommand[128];
 char CommandHistory[18][64];
 int CommandHistoryCount;
 
+DWORD reg;
+DWORD reg2;
+unsigned long value;
+
 
 //CPU MNEMONICS
 int IsCPUMnemonic(char c[]);

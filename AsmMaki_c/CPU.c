@@ -69,8 +69,8 @@ extern void SimulateCPUMnemonic(char command[8][16])
 {
 	if (strlen(command[1]) == 0 || strlen(command[2]) == 0)
 		return;
-	DWORD reg = GetRegister(command[1]);
-	DWORD reg2 = GetRegister(command[2]);
+	reg = GetRegister(command[1]);
+	reg2 = GetRegister(command[2]);
 	value = strtol(command[2], NULL, 0);
 
 	switch (Mnemonic)
