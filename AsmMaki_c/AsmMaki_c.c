@@ -11,6 +11,16 @@
 int width = 60;
 int height = 13;
 
+void strup(char s[])
+{
+	int i = 0;
+	while (s[i])  /* While not at the end of the string yet (marked by 0).  */
+	{
+		s[i] = toupper(s[i]);
+		++i;
+	}
+	return;
+}
 
 WINDOW * InitScreen()
 {
@@ -199,9 +209,11 @@ void ParseCommand()
 {
 	char CommandParsed[8][16] = { 0 };
 	char * chunk = strtok(CurrentCommand, " ");
+	strup(chunk);
 	int chunkIndex = 0;
 	while (chunk)
 	{
+		strup(chunk);
 		strcpy(CommandParsed[chunkIndex++], chunk);
 		chunk = strtok(NULL, " ");
 	}
