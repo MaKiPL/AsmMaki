@@ -3,10 +3,12 @@
 #pragma once
 
 int bOK = 0;
+int bits = 32;
 
 DWORD GetRegister(char a[])
 {
 	bOK = 1;
+	bits = 32;
 	if(strstr(a, "EAX"))
 		return EAX;
 	if (strstr(a, "EBX"))
@@ -24,7 +26,7 @@ DWORD GetRegister(char a[])
 	if (strstr(a, "ESP"))
 		return ESP;
 
-	//16bit
+	bits = 16;
 	if (strstr(a, "AX"))
 		return EAX & 0xFFFF;
 	if (strstr(a, "BX"))
@@ -38,7 +40,7 @@ DWORD GetRegister(char a[])
 	if (strstr(a, "DI"))
 		return EDI&0xFFFF;
 
-	//8bit High
+	bits = 8;
 	if (strstr(a, "AH"))
 		return (EAX >> 8) & 0xFF;
 	if (strstr(a, "BH"))
@@ -48,8 +50,6 @@ DWORD GetRegister(char a[])
 	if (strstr(a, "DH"))
 		return (EDX >> 8) & 0xFF;
 
-
-	//8bit Low
 	if (strstr(a, "AL"))
 		return EAX& 0xFF;
 	if (strstr(a, "BL"))
@@ -67,6 +67,7 @@ DWORD GetRegister(char a[])
 void SetRegister(char a[], DWORD value)
 {
 	bOK = 1;
+	bits = 32;
 	if (strstr(a, "EAX"))
 		EAX = value;
 	if (strstr(a, "EBX"))
@@ -84,7 +85,7 @@ void SetRegister(char a[], DWORD value)
 	if (strstr(a, "ESP"))
 		ESP = value;
 
-	//16bit
+	bits = 16;
 	if (strstr(a, "AX"))
 		EAX = (EAX & 0xFFFF0000) + (value & 0x0000FFFF);
 	if (strstr(a, "BX"))
@@ -98,7 +99,7 @@ void SetRegister(char a[], DWORD value)
 	if (strstr(a, "DI"))
 		EDI = (EDI & 0xFFFF0000) + (value & 0x0000FFFF);
 
-	//8bit High
+	bits = 8;
 	if (strstr(a, "AH"))
 		EAX = (EAX & 0xFFFF00FF) | ((value<<8) & 0x0000FF00);
 	if (strstr(a, "BH"))
@@ -108,8 +109,6 @@ void SetRegister(char a[], DWORD value)
 	if (strstr(a, "DH"))
 		EDX = (EDX & 0xFFFF00FF) | ((value << 8) & 0x0000FF00);
 
-
-	//8bit Low
 	if (strstr(a, "AL"))
 		EAX = (EAX & 0xFFFFFF00) | (value & 0x000000FF);
 	if (strstr(a, "BL"))
