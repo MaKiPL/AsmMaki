@@ -24,8 +24,11 @@ enum CPUMnemonic
 	SHR,
 	SAL,
 	SAR,
+	POP,
+	PUSH,
 	
 	//TODO below
+	SUB,
 	DIV,
 	IDIV,
 	IMUL,
@@ -81,8 +84,7 @@ enum CPUMnemonic
 	MOVSB,
 	MOVSW,
 
-	POP,
-	PUSH,
+
 	POPF,
 	PUSHF,
 
@@ -610,6 +612,70 @@ void _SAR()
 	_LAHF();
 }
 
+void _PUSH()
+{
+	reg = GetRegister(a);
+	if (bits == 32)
+		__asm
+	{
+		PUSH EAX
+		PUSH AX
+	}
+	if (bits == 16)
+		_asm
+	{
+		MOV AX, word ptr[reg]
+		MOV CL, byte ptr[value]
+		SAR AX, CL
+		MOVZX EBX, AX
+		MOV[reg], EBX
+	}
+	if (bits == 8)
+		__asm
+	{
+		MOV AL, byte ptr[reg]
+		MOV CL, byte ptr[value]
+		SAR AL, CL
+		MOVZX EBX, AL
+		MOV[reg], EBX
+	}
+	SetRegister(a, reg);
+	_LAHF();
+}
+
+void _POP()
+{
+	reg = GetRegister(a);
+	if (bits == 32)
+		__asm
+	{
+		MOV EAX, [reg]
+		MOV CL, byte ptr[value]
+		SAR EAX, CL
+		MOV[reg], EAX
+	}
+	if (bits == 16)
+		_asm
+	{
+		MOV AX, word ptr[reg]
+		MOV CL, byte ptr[value]
+		SAR AX, CL
+		MOVZX EBX, AX
+		MOV[reg], EBX
+	}
+	if (bits == 8)
+		__asm
+	{
+		MOV AL, byte ptr[reg]
+		MOV CL, byte ptr[value]
+		SAR AL, CL
+		MOVZX EBX, AL
+		MOV[reg], EBX
+	}
+	SetRegister(a, reg);
+	_LAHF();
+}
+
 extern void SimulateCPUMnemonic(char command[8][16])
 {
 	reg = GetRegister(command[1]);
@@ -675,6 +741,12 @@ extern void SimulateCPUMnemonic(char command[8][16])
 		break;
 	case SAR:
 		_SAR();
+		break;
+	case POP:
+		_POP();
+		break;
+	case PUSH:
+		_PUSH();
 		break;
 	}
 }

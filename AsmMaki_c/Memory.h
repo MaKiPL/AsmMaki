@@ -10,7 +10,7 @@ BYTE SF, ZF, OF, CF, PF, AF;
 SINGLE ST0, ST1, ST2, ST3, ST4, ST5, ST6, ST7;
 WORD CS, FS, DS, GS, ES, SS;
 
-int STACK[1024]; //4096 bytes stack; Current by ESP; PUSH= STACK[ESP++] = %arg; POP the same but zeroing and ESP--
+BYTE STACK[4096]; //4096 bytes stack; Current by ESP; PUSH= STACK[ESP++] = %arg; POP the same but zeroing and ESP--
 int CurrentStackSize;
 
 char CurrentCommand[128];

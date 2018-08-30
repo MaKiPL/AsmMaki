@@ -140,27 +140,27 @@ void UpdateStackWindow(WINDOW * stackWin)
 	wborder(stackWin, '|', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 	int localIndex = 0;
 
-	if (ESP < 0x3FF)
+	if (ESP < 0xFFF)
 	{
-		sprintf(buffer, "%03X:\t%08X", ESP + 1, STACK[ESP + 1]);
+		sprintf(buffer, "%03X:\t%02X", (ESP + 1), STACK[ESP + 1]);
 		mvwaddstr(stackWin, 2, 2, buffer);
-		if (ESP < 0x3FE)
+		if (ESP < 0xFFE)
 		{
-			sprintf(buffer, "%03X:\t%08X", ESP + 2, STACK[ESP + 2]);
+			sprintf(buffer, "%03X:\t%02X", (ESP + 2), STACK[ESP + 2]);
 			mvwaddstr(stackWin, 1, 2, buffer);
 		}
 	}
 
-	sprintf(buffer, "%03X:\t%08X <<<", ESP, STACK[ESP]);
+	sprintf(buffer, "%03X:\t%02X <<<", ESP, STACK[ESP]);
 	mvwaddstr(stackWin, 3, 2, buffer);
 
 	if (ESP > 0x00)
 	{
-		sprintf(buffer, "%03X:\t%08X", ESP - 1, STACK[ESP - 1]);
+		sprintf(buffer, "%03X:\t%02X", (ESP - 1), STACK[ESP - 1]);
 		mvwaddstr(stackWin, 4, 2, buffer);
 		if (ESP > 0x01)
 		{
-			sprintf(buffer, "%03X:\t%08X", ESP - 2, STACK[ESP - 2]);
+			sprintf(buffer, "%03X:\t%02X", (ESP - 2), STACK[ESP - 2]);
 			mvwaddstr(stackWin, 5, 2, buffer);
 		}
 	}
